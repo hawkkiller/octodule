@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon src/index.ts",
-    "compile": "npx tsc"
+    "compile": "npx tsc",
+    "start:build": "pkg build/index.js -o build/octodule"
   },
   "keywords": [],
   "author": "",
