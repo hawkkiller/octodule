@@ -1,9 +1,23 @@
 import { Config } from './core/config/config';
 import { Telegraf } from 'telegraf';
+import { Bot } from './core/util/types/telegraf.types';
 
-const config = Config.getConfig();
+bootstrap();
 
-const bot = new Telegraf(config.botToken);
+async function bootstrap() {
+  const config = Config.getConfig();
 
-console.log('Bot is running');
-bot.launch();
+  const bot = new Telegraf(config.botToken);
+
+  launchBot({
+    bot: bot,
+  });
+}
+
+function launchBot(args: {
+  bot: Bot,
+}) {
+  const { bot } = args;
+
+  bot.launch();
+}
