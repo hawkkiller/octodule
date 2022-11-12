@@ -1,14 +1,9 @@
 interface IConfig {
   readonly botToken: string;
-  readonly db: DB;
 }
 
 interface GetConfigParams {
   readonly reload?: boolean;
-}
-
-interface DBParams {
-  readonly uri: string;
 }
 
 const getConfigDefaults: GetConfigParams = {
@@ -16,13 +11,11 @@ const getConfigDefaults: GetConfigParams = {
 };
 
 class Config {
-  constructor({ botToken, db }: IConfig) {
+  constructor({ botToken }: IConfig) {
     this.botToken = botToken;
-    this.db = db;
   }
 
   readonly botToken: string;
-  readonly db: DB;
 
   static config: Config | undefined;
 
@@ -39,15 +32,10 @@ class Config {
       return Config.config;
     }
     const botToken = this.fromEnv('BOT_TOKEN');
-    const dbDSN = this.fromEnv('DB_DSN');
 
-    const db = new DB({
-      uri: dbDSN,
-    });
     // Resulting config object
     const config = new Config({
       botToken: botToken,
-      db: db,
     });
     Config.config = config;
     return config;
@@ -61,14 +49,6 @@ class Config {
     return value;
   }
 
-}
-
-class DB {
-  constructor(args: DBParams) {
-    this.dsn = args.uri;
-  }
-
-  readonly dsn: string;
 }
 
 export { Config };
