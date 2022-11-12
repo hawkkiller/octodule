@@ -1,11 +1,10 @@
-import { Controller } from './util/controller/controller';
+import { Controller } from './logic/controller/controller';
 import { Config } from './config/config';
 import { Telegraf } from 'telegraf';
 import { Bot } from './util/custom-types/telegraf.types';
 import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv';
 import { EchoController } from './controllers/echo/echo.controller';
-import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 
 bootstrap();
 
