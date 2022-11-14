@@ -29,7 +29,6 @@
   "dependencies": {
     "@prisma/client": "^4.6.1",
     "dotenv": "^16.0.3",
-    "mongoose": "^6.7.2",
     "telegraf": "^4.10.0",
     "ts-node": "^10.9.1"
   }
