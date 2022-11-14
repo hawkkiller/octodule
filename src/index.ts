@@ -1,4 +1,4 @@
-import { Controller } from './logic/controller/controller';
+import { Controller } from './feature/echo/logic/controller';
 import { Config } from './config/config';
 import { Telegraf } from 'telegraf';
 import { Bot } from './util/custom-types/telegraf.types';
