@@ -1,10 +1,10 @@
-import { Controller } from './feature/echo/logic/controller';
+import { Controller } from './logic/controller';
 import { Config } from './config/config';
 import { Telegraf } from 'telegraf';
 import { Bot } from './util/custom-types/telegraf.types';
 import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv';
-import { EchoController } from './controllers/echo/echo.controller';
+import { EchoController } from './feature/echo/echo.controller';
 
 bootstrap();
 

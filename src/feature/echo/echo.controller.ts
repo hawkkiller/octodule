@@ -1,4 +1,4 @@
-import { Controller } from '../../feature/echo/logic/controller';
+import { Controller } from '../../logic/controller';
 import { Bot } from '../../util/custom-types/telegraf.types';
 
 export class EchoController implements Controller {
