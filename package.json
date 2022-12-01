@@ -10,7 +10,7 @@
     "start:build": "pkg build/index.js -o build/octodule",
     "lint": "eslint . --ext .ts",
     "combine": "npm run compile && npm run start:build",
-    "prisma": "cd src/core/db/ && npx prisma generate"
+    "prisma": "cd src/prisma/ && npx prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -24,10 +24,11 @@
     "eslint-config-prettier": "^8.5.0",
     "jest": "^29.3.1",
     "prettier": "^2.7.1",
+    "prisma": "^4.7.0",
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@prisma/client": "^4.6.1",
+    "@prisma/client": "^4.7.0",
     "dotenv": "^16.0.3",
     "telegraf": "^4.10.0",
     "ts-node": "^10.9.1"
