@@ -6,8 +6,7 @@ export class EchoController implements Controller {
     bot.command('echo', (ctx) => {
       const { message } = ctx;
       const { text } = message;
-      const echo = text?.split(' ').slice(1).join(' ');
-      ctx.reply(echo);
+      ctx.reply(text);
     });
   }
 }
