@@ -14,26 +14,29 @@ enum SubscriptionStatus {
   UNPAID
 }
 
+model User {
+  // telegram id
+  id                 String             @id @unique
+  username           String
+  subscriptionStatus SubscriptionStatus @default(UNPAID) @map("subscription_status")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+  chats              Chat[]
+
+  @@index([id], name: "user_index")
+  @@map("users")
+}
+
 model Chat {
   // telegram chat id
   id        String   @id
   paid      Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  users     User[]
 
   @@index([id], name: "chat_index")
   @@map("chats")
-}
-
-model User {
-  // telegram id
-  id                 String             @id @unique
-  subscriptionStatus SubscriptionStatus @default(UNPAID) @map("subscription_status")
-  createdAt          DateTime           @default(now()) @map("created_at")
-  updatedAt          DateTime           @updatedAt @map("updated_at")
-
-  @@index([id], name: "user_index")
-  @@map("users")
 }
 
 model Schedule {
