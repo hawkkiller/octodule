@@ -2,6 +2,17 @@
 CREATE TYPE "SubscriptionStatus" AS ENUM ('ACTIVE', 'CANCELLED', 'PAST_DUE', 'UNPAID');
 
 -- CreateTable
+CREATE TABLE "users" (
+    "id" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "subscription_status" "SubscriptionStatus" NOT NULL DEFAULT 'UNPAID',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "chats" (
     "id" TEXT NOT NULL,
     "paid" BOOLEAN NOT NULL DEFAULT false,
@@ -9,16 +20,6 @@ CREATE TABLE "chats" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "chats_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "users" (
-    "id" TEXT NOT NULL,
-    "subscription_status" "SubscriptionStatus" NOT NULL DEFAULT 'UNPAID',
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -69,14 +70,20 @@ CREATE TABLE "kvs" (
     CONSTRAINT "kvs_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE INDEX "chat_index" ON "chats"("id");
+-- CreateTable
+CREATE TABLE "_ChatToUser" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL
+);
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_id_key" ON "users"("id");
 
 -- CreateIndex
 CREATE INDEX "user_index" ON "users"("id");
+
+-- CreateIndex
+CREATE INDEX "chat_index" ON "chats"("id");
 
 -- CreateIndex
 CREATE INDEX "schedule_index" ON "schedules"("id");
@@ -90,6 +97,12 @@ CREATE INDEX "lesson_index" ON "lessons"("id");
 -- CreateIndex
 CREATE INDEX "kv_index" ON "kvs"("id", "lesson_id");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "_ChatToUser_AB_unique" ON "_ChatToUser"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_ChatToUser_B_index" ON "_ChatToUser"("B");
+
 -- AddForeignKey
 ALTER TABLE "days" ADD CONSTRAINT "days_scheduleId_fkey" FOREIGN KEY ("scheduleId") REFERENCES "schedules"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -98,3 +111,9 @@ ALTER TABLE "lessons" ADD CONSTRAINT "lessons_dayId_fkey" FOREIGN KEY ("dayId") 
 
 -- AddForeignKey
 ALTER TABLE "kvs" ADD CONSTRAINT "kvs_lesson_id_fkey" FOREIGN KEY ("lesson_id") REFERENCES "lessons"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ChatToUser" ADD CONSTRAINT "_ChatToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "chats"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ChatToUser" ADD CONSTRAINT "_ChatToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
