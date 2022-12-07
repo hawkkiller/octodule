@@ -5,6 +5,8 @@ import { Bot } from './util/custom-types/telegraf.types';
 import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv';
 import { EchoController } from './feature/echo/echo.controller';
+import { AddScheduleServiceImpl } from './feature/schedule/add-schedule.service';
+import { AddScheduleController } from './feature/schedule/add-schedule.controller';
 
 bootstrap();
 
@@ -20,7 +22,11 @@ async function bootstrap() {
 
   const echoController = new EchoController();
 
-  const controllers: Controller[] = [echoController];
+  const addScheduleController = new AddScheduleController(
+    new AddScheduleServiceImpl(),
+  );
+
+  const controllers: Controller[] = [echoController, addScheduleController];
 
   registerControllers(bot, controllers);
 

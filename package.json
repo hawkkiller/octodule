@@ -30,6 +30,7 @@
   "dependencies": {
     "@prisma/client": "^4.7.0",
     "dotenv": "^16.0.3",
+    "languagedetect": "^2.0.0",
     "telegraf": "^4.11.2",
     "ts-node": "^10.9.1"
   }

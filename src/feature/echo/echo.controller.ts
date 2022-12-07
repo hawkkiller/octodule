@@ -3,10 +3,11 @@ import { Bot } from '../../util/custom-types/telegraf.types';
 
 export class EchoController implements Controller {
   register(bot: Bot): void {
-    bot.command('echo', (ctx) => {
-      const { message } = ctx;
-      const { text } = message;
-      ctx.reply(text);
+    bot.on('text', (ctx) => {
+      const text = ctx.message?.text;
+      if (text && text.toLowerCase() == 'beep') {
+        ctx.sendMessage('Boop');
+      }
     });
   }
 }
