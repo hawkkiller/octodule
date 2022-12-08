@@ -1,5 +1,6 @@
 interface IConfig {
   readonly botToken: string;
+  readonly rabbitMQHost: string;
 }
 
 interface GetConfigParams {
@@ -11,11 +12,14 @@ const getConfigDefaults: GetConfigParams = {
 };
 
 class Config {
-  constructor({ botToken }: IConfig) {
+  constructor({ botToken, rabbitMQHost }: IConfig) {
     this.botToken = botToken;
+    this.rabbitMQHost = rabbitMQHost;
   }
 
   readonly botToken: string;
+
+  readonly rabbitMQHost: string;
 
   static config: Config | undefined;
 
@@ -33,9 +37,12 @@ class Config {
     }
     const botToken = this.fromEnv('BOT_TOKEN');
 
+    const rabbitMQHost = this.fromEnv('RABBIT_MQ_HOST');
+
     // Resulting config object
     const config = new Config({
       botToken: botToken,
+      rabbitMQHost: rabbitMQHost,
     });
     Config.config = config;
     return config;

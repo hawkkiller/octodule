@@ -1,5 +1,5 @@
 import { Bot } from '../../util/custom-types/telegraf.types';
-import { Controller } from './../../logic/controller';
+import { Controller } from '../../logic/controller';
 import { AddScheduleService } from './add-schedule.service';
 
 export class AddScheduleController implements Controller {
@@ -21,12 +21,12 @@ export class AddScheduleController implements Controller {
       if (doc.mime_type == null || doc.mime_type !== 'application/json') {
         return;
       }
-      ctx.sendMessage('Processing...').then((msg) => {
+      ctx.reply('Sending Request...').then((msg) => {
         this.service.addSchedule({
           document: doc,
           from: ctx.from,
           botMsg: msg,
-        });
+        }).then(() => ctx.editMessageText('Waiting For Response...'));
       });
     });
   }

@@ -2,13 +2,14 @@ import { Controller } from './logic/controller';
 import { Config } from './config/config';
 import { Telegraf } from 'telegraf';
 import { Bot } from './util/custom-types/telegraf.types';
-import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv';
 import { EchoController } from './feature/echo/echo.controller';
 import { AddScheduleServiceImpl } from './feature/schedule/add-schedule.service';
 import { AddScheduleController } from './feature/schedule/add-schedule.controller';
+import * as amqp from 'amqplib';
 
-bootstrap();
+// start
+bootstrap().then(null);
 
 async function bootstrap() {
   await dotenv.config();
@@ -16,14 +17,20 @@ async function bootstrap() {
 
   const bot = new Telegraf(config.botToken);
 
-  const prisma = new PrismaClient();
-
-  await prisma.$connect();
+  const amqpConn = await amqp.connect(config.rabbitMQHost);
+  const channel = await amqpConn.createChannel();
+  await channel.assertQueue('add-schedule-result');
+  await channel.consume('add-schedule-result', (msg) => {
+    console.log(msg?.content.toString());
+    if (msg) {
+      channel.ack(msg);
+    }
+  });
 
   const echoController = new EchoController();
 
   const addScheduleController = new AddScheduleController(
-    new AddScheduleServiceImpl(),
+    new AddScheduleServiceImpl()
   );
 
   const controllers: Controller[] = [echoController, addScheduleController];
@@ -31,7 +38,7 @@ async function bootstrap() {
   registerControllers(bot, controllers);
 
   await launch({
-    bot: bot,
+    bot: bot
   });
 }
 
@@ -46,5 +53,5 @@ async function launch(args: {
 }) {
   const { bot } = args;
 
-  bot.launch();
+  await bot.launch();
 }
