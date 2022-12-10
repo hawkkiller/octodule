@@ -4,9 +4,8 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Build Project",
-      "program": "${workspaceFolder}/src/index.ts",
-      "preLaunchTask": "npm: compile",
+      "name": "Debug",
+      "args": ["--require", "ts-node/register", "src/main.ts"],
       "sourceMaps": true,
       "smartStep": true,
       "internalConsoleOptions": "openOnSessionStart",

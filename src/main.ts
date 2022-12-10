@@ -1,57 +1,51 @@
-import { Controller } from './logic/controller';
-import { Config } from './config/config';
-import { Telegraf } from 'telegraf';
-import { Bot } from './util/custom-types/telegraf.types';
-import * as dotenv from 'dotenv';
-import { EchoController } from './feature/echo/echo.controller';
-import { AddScheduleServiceImpl } from './feature/schedule/add-schedule.service';
-import { AddScheduleController } from './feature/schedule/add-schedule.controller';
 import * as amqp from 'amqplib';
+import * as dotenv from 'dotenv';
+import { Telegraf } from 'telegraf';
+import { Logger } from 'tslog';
+import { Config } from './config/config';
+import { App } from './feature/app/logic/app';
+import { AddScheduleController } from './feature/schedule/logic/add-schedule.controller';
+import { AddScheduleServiceImpl } from './feature/schedule/logic/add-schedule.service';
+import { Controller } from './logic/controller';
 
 // start
 bootstrap().then(null);
 
 async function bootstrap() {
+  const logger = new Logger<never>(
+    {
+      stylePrettyLogs: true,
+    },
+  );
+  logger.info('Loading Config...');
   await dotenv.config();
   const config = Config.getConfig();
 
+  logger.info('Creating Bot');
   const bot = new Telegraf(config.botToken);
 
-  const amqpConn = await amqp.connect(config.rabbitMQHost);
-  const channel = await amqpConn.createChannel();
-  await channel.assertQueue('add-schedule-result');
-  await channel.consume('add-schedule-result', (msg) => {
-    console.log(msg?.content.toString());
-    if (msg) {
-      channel.ack(msg);
-    }
-  });
-
-  const echoController = new EchoController();
+  logger.info('Connecting to RabbitMQ');
+  const [rabbitConnection, rabbitChannel] = await configureRabbit(config);
 
   const addScheduleController = new AddScheduleController(
-    new AddScheduleServiceImpl()
+    new AddScheduleServiceImpl(logger)
   );
 
-  const controllers: Controller[] = [echoController, addScheduleController];
+  const controllers: Controller[] = [addScheduleController];
 
-  registerControllers(bot, controllers);
-
-  await launch({
-    bot: bot
+  const app = new App({
+    controllers,
+    bot,
+    logger,
+    rabbitChannel,
+    rabbitConnection,
   });
+  // start app
+  app.start();
 }
 
-function registerControllers(bot: Bot, controllers: Controller[]) {
-  controllers.forEach((controller) => {
-    controller.register(bot);
-  });
-}
-
-async function launch(args: {
-  bot: Bot,
-}) {
-  const { bot } = args;
-
-  await bot.launch();
+async function configureRabbit(config: Config): Promise<[amqp.Connection, amqp.Channel]> {
+  const amqpConn = await amqp.connect(config.rabbitMQHost);
+  const channel = await amqpConn.createChannel();
+  return [amqpConn, channel];
 }
